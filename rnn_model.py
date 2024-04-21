@@ -1,12 +1,13 @@
-import numpy as np
+
 from keras.models import Sequential
-from keras.layers import LSTM, Dropout, Dense
+from keras.layers import Dropout, Dense
 from keras.layers.recurrent import SimpleRNN
-from tensorflow_core.python.keras.optimizer_v2.adam import Adam
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import my_tools
 
 
+# --------------------------------------------------
+#
+# --------------------------------------------------
 def predict_rnn(x_train, y_train, x_test, y_test,
                 my_epochs, my_batch_size, dropout):
     model = Sequential()
@@ -24,6 +25,7 @@ def predict_rnn(x_train, y_train, x_test, y_test,
     predictions = model.predict(x_test)
 
     mse, r2, mae, rmse, mape = my_tools.evaluate_model(y_test, predictions)
+    model.save('./data/models/RNN/RNN_models/HMC/rnn_hmc.model')
 
     return predictions
 

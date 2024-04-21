@@ -1,9 +1,27 @@
-
+import pandas as pd
 import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
+import ann_model, rnn_model, lstm_model, my_tools
 import numpy as np
 
-import ann_model, rnn_model, lstm_model, my_tools
+
+def trading(days):
+    stock_abbreviation = "HMC"
+    df = my_tools.fetch_data(stock_abbreviation, 0)
+    current_ticker = {}
+    # simulating a ticker intake
+    for i, r in df.iterrows():
+        current_ticker[i] = r['Close']
+        my_timeframe = (pd.DataFrame(current_ticker.items(), columns=['Date', 'Price'])).tail(days)
+        my_timeframe.index = my_timeframe.pop("Date")
+        moving_averages = np.mean(my_timeframe['Price'].values)
+        print(r['Close'], moving_averages)
+
+
+
+
+
+
 
 
 def main():
@@ -13,30 +31,30 @@ def main():
     # Days to remember
     # Network variables
     # --------------------------------------------------
-    stock_abbreviation = "HLX"
+    stock_abbreviation = "HMC"
 
-    ann_model_on = False
-    rnn_model_on = True
+    ann_model_on = True
+    rnn_model_on = False
     lstm_model_on = False
 
-    days_total = 1500
+    days_total = 300
     days_memory = 30
     test_train_split_size = 0.8
-    my_epochs = 10
-    my_batch_size = 12
+    my_epochs = 100
+    my_batch_size = 64
     my_dropout = 0.2
 
     # --------------------------------------------------
     # Retrieve the dataset and format it
     # --------------------------------------------------
     df = my_tools.fetch_data(stock_abbreviation, days_total)
+    # my_tools.make_price_graph(df, stock_abbreviation)
 
     # --------------------------------------------------
     # Scale the data
     # --------------------------------------------------
     scaler = MinMaxScaler(feature_range=(0, 1))
-    scaler.fit(df)
-    scaled_data = scaler.transform(df)
+    scaled_data = scaler.fit_transform(df)
 
     # --------------------------------------------------
     # Get train and test subsets
@@ -124,4 +142,5 @@ def main():
 # --------------------------------------------------
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 with tf.device('/gpu:0'):
-    main()
+    #main()
+    trading(5)

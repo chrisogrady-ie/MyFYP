@@ -8,11 +8,24 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 # return a dataframe of requested stock in for of (datetime : price)
 # --------------------------------------------------
 def fetch_data(stock_abbreviation, size):
-    df = pd.read_csv('data/stocks/' + stock_abbreviation + '.csv')
-    df = df.tail(size)
+    df = pd.read_csv('data/stocks/papers/' + stock_abbreviation + '.csv')
+    # df = df.tail(size)
     df['Date'] = pd.to_datetime(df['Date'])
-    df = df[['Date', 'Open']]
+    df = df[['Date', 'Close']]
     df.index = df.pop("Date")
+
+    # LSTM/RNN HMC/INTU/ORCL 30 June 2000 to 21 July 2020
+    df = df.loc['30/06/2000':'21/07/2020']
+
+    if 0 in df.values:
+        print('0 value detected!!!!!!!!!')
+        exit()
+
+    null_vals = df.isnull().values.any()
+    if null_vals is True:
+        print('null value detected!!!!!!!!!')
+        exit()
+
     return df
 
 
@@ -90,11 +103,24 @@ def make_graph(train, test, predicted, stock_abbreviation, model):
 
 
 # --------------------------------------------------
+# Plots graph with supplied data and abbreviation
+# --------------------------------------------------
+def make_price_graph(df, stock_abbreviation):
+    plt.plot(df.index, df['Close'])
+
+    plt.title(stock_abbreviation + " price")
+    plt.xlabel('Date')
+    plt.ylabel('Price (USD)')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+
+# --------------------------------------------------
 # calculates mape
 # --------------------------------------------------
 def mean_absolute_percentage_error(y_test, predictions):
-    #y_test, predictions = np.array(y_test), np.array(predictions)
-    #print(y_test)
+    y_test, predictions = np.array(y_test), np.array(predictions)
     return np.mean(np.abs((y_test - predictions) / y_test)) * 100
 
 
@@ -110,7 +136,7 @@ def evaluate_model(y_test, predictions):
     rmse = np.sqrt(mse)
     mape = mean_absolute_percentage_error(y_test, predictions)
 
-    dec = 4
+    dec = 5
     # print('Mean Squared Error: ',  mse)
     print('r2 score (Closer to 1 gives a good prediction):\n',
           r2.round(decimals=dec))

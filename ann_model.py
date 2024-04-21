@@ -1,8 +1,6 @@
-import numpy as np
+
 from keras.models import Sequential
-from keras.layers import LSTM, Dropout, Dense
-from tensorflow_core.python.keras.optimizer_v2.adam import Adam
-from sklearn.metrics import mean_squared_error, mean_absolute_error
+from keras.layers import Dropout, Dense
 import my_tools
 
 
@@ -24,6 +22,6 @@ def predict_ann(x_train, y_train, x_test, y_test,
     predictions = model.predict(x_test)
 
     mse, r2, mae, rmse, mape = my_tools.evaluate_model(y_test, predictions)
-    # model.save('./data/models/ann.model')
+    model.save('./data/models/ANN/ANN_models/HMC/ann_hmc.model')
 
     return predictions
