@@ -25,8 +25,9 @@ def predict_lstm(x_train, y_train, x_test, y_test,
     model.fit(x_train, y_train, epochs=my_epochs, batch_size=my_batch_size)
     predictions = model.predict(x_test)
 
+    print("\n\n\nNormalised data:")
     mse, r2, mae, rmse, mape = my_tools.evaluate_model(y_test, predictions)
-    model.save('./data/models/LSTM/LSTM_models/INTU/lstm_intu.model')
+    #model.save('./data/models/LSTM/LSTM_models/INTU/lstm_intu.model')
 
     return predictions
 
